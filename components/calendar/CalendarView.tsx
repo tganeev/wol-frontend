@@ -23,12 +23,12 @@ export default function CalendarView({ slots }: Props) {
   const [activeBucket, setActiveBucket] = useState<SlotBucket | null>(null);
 
   const events = buckets.map((b) => ({
-    id: b.slotIds.join(","),
-    start: b.bucketStart.toISOString(),
-    title:
-      b.slots.length > 1 ? `${b.slots.length} sessions` : b.slots[0].title,
-    extendedProps: { bucket: b },
-  }));
+  id: b.slotIds.join(","),
+  start: b.bucketStart.toISOString(),
+  title: b.slots.length > 1 ? `${b.slots.length} sessions` : b.slots[0].title,
+  extendedProps: { bucket: b },
+  className: b.slots.length > 1 ? "stacked-slot" : "", // класс только для бакетов > 1
+}));
 
   return (
     <>

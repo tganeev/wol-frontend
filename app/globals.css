@@ -24,3 +24,19 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Эффект стопки для перекрывающихся слотов (смещение вправо-вверх) */
+.stacked-slot {
+  /* Рисуем стопку с помощью box-shadow */
+  /* X > 0 (вправо), Y < 0 (вверх) */
+  box-shadow: 
+    2px -2px 0px 0px #93c5fd,   /* светло-синий слой */
+    4px -4px 0px 0px #60a5fa,   /* синий слой */
+    6px -6px 0px 0px #3b82f6 !important; /* темно-синий слой */
+    
+  border: 1px solid #2563eb !important;
+  border-radius: 4px !important;
+  
+  position: relative;
+  z-index: 10 !important;
+}
