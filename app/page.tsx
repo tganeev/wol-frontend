@@ -1,7 +1,7 @@
 // app/page.tsx
 import { Suspense } from "react";
 import CalendarSection from "@/components/calendar/CalendarSection";
-import Link from "next/link"; // Импортируем Link из Next.js
+import Navbar from "@/components/Navbar"; 
 
 export default function HomePage() {
   return (
@@ -15,21 +15,8 @@ export default function HomePage() {
           </p>
         </div>
         
-        {/* Блок авторизации */}
-        <nav className="flex items-center gap-3">
-          <Link
-            href="/login"
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-          >
-            Log in
-          </Link>
-          <Link
-            href="/register"
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
-          >
-            Sign up
-          </Link>
-        </nav>
+        {/* Используем наш компонент Navbar */}
+        <Navbar />
       </header>
 
       <section className="max-w-6xl mx-auto bg-white rounded-lg shadow p-4">

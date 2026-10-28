@@ -1,48 +1,77 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CalendarView from "./CalendarView";
 import { Slot } from "@/types";
+import { fetchApi } from "@/lib/api";
 
 export default function CalendarSection() {
   const [slots, setSlots] = useState<Slot[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [newSlotTime, setNewSlotTime] = useState("");
   const [newSlotTitle, setNewSlotTitle] = useState("");
+  const [error, setError] = useState("");
 
-  const handleAddSlot = (e: React.FormEvent) => {
+  useEffect(() => {
+    loadSlots();
+  }, []);
+
+  const loadSlots = async () => {
+    try {
+      const data = await fetchApi("/slots");
+      setSlots(data);
+    } catch (err: any) {
+      console.error("Failed to load slots:", err);
+      setError("Failed to load slots. Check if backend is running.");
+    }
+  };
+
+  const handleAddSlot = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newSlotTime) return;
+    setError("");
 
-    // Преобразуем локальное время из input в ISO (UTC)
+    const userStr = localStorage.getItem("user");
+    if (!userStr) {
+      setError("You must be logged in to create a slot.");
+      return;
+    }
+
     const date = new Date(newSlotTime);
 
-    const newSlot: Slot = {
-      id: `test-${Date.now()}`,
-      hostId: "h-test",
-      hostName: "Test Host",
+    const slotData = {
       title: newSlotTitle || "Untitled Session",
+      description: "",
       startAt: date.toISOString(),
       durationMinutes: 60,
       format: "ONLINE",
       level: "ANY",
-      markers: [],
+      markers: "",
       capacity: 5,
-      enrolledCount: 0,
-      status: "SCHEDULED",
+      location: null,
+      onlineLink: "https://meet.google.com/test",
     };
 
-    setSlots((prev) => [...prev, newSlot]);
-    
-    // Сбрасываем форму
-    setNewSlotTime("");
-    setNewSlotTitle("");
-    setIsFormOpen(false);
+    try {
+      const newSlot = await fetchApi("/slots", {
+        method: "POST",
+        body: JSON.stringify(slotData),
+      });
+      
+      setSlots((prev) => [...prev, newSlot]);
+      setNewSlotTime("");
+      setNewSlotTitle("");
+      setIsFormOpen(false);
+    } catch (err: any) {
+      setError(err.message);
+    }
   };
 
   return (
     <div>
       <div className="mb-6">
+        {error && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded text-sm">{error}</div>}
+        
         {!isFormOpen ? (
           <button
             onClick={() => setIsFormOpen(true)}
